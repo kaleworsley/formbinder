@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <script src="jquery.js" type="text/javascript"></script>
+    <script src="underscore.js" type="text/javascript"></script>
+    <script src="backbone.js" type="text/javascript"></script>
+    <script src="formbinder.js" type="text/javascript"></script>
+
+    <script id="test_form" type="text/x-template">
+    <form id="test">
+
+    <div>
+      <label for="name">Name:</label>
+      <input id="name" data-field-name="name" name="name" type="text" />
+    </div>
+
+    <div>
+      <label for="description">Description:</label>
+      <textarea id="description" data-field-name="description" name="description"></textarea>
+    </div>
+
+    <div>
+      <label for="kind">Kind:</label>
+      <select id="kind" data-field-name="kind" name="kind">
+        <option value="">- None -</option>
+        <option value="test-1">Test 1</option>
+        <option value="test-2">Test 2</option>
+        <option value="test-3">Test 3</option>
+        <option value="test-4">Test 4</option>
+        <option value="test-5">Test 5</option>
+      </select>
+    </div>
+
+
+    <div>
+      <label for="kinds">Kinds:</label>
+      <select id="kinds" data-field-name="kinds" name="kinds" multiple="multiple">
+        <option value="">- None -</option>
+        <option value="test-1">Test 1</option>
+        <option value="test-2">Test 2</option>
+        <option value="test-3">Test 3</option>
+        <option value="test-4">Test 4</option>
+        <option value="test-5">Test 5</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="enabled">Enabled:</label>
+      <input id="enabled" data-field-name="enabled" name="enabled" type="checkbox" value='blah' />
+    </div>
+
+    <div>
+      <label for="state_on">On</label>
+      <input id="state_on" data-field-name="state" name="state" type="radio" value='on' />
+
+      <label for="state_off">Off</label>
+      <input id="state_off" data-field-name="state" name="state" type="radio" value='off' />
+    </div>
+
+    <div>
+      <label for="users_bob">Bob</label>
+      <input id="users_bob" data-field-name="users" name="users" type="checkbox" value='bob' />
+
+      <label for="users_bruce">Bruce</label>
+      <input id="users_bruce" data-field-name="users" name="users" type="checkbox" value='bruce' />
+
+      <label for="users_john">John</label>
+      <input id="users_john" data-field-name="users" name="users" type="checkbox" value='john' />
+
+      <label for="users_jane">Jane</label>
+      <input id="users_jane" data-field-name="users" name="users" type="checkbox" value='jane' />
+    </div>
+
+    <input id="submit" type="submit" value="Save!" />
+    <input id="clear" type="submit" value="Clear!" />
+    </form>
+    </script>
+
+    <script type="text/javascript">
+        Test = Backbone.Model.extend({});
+        TestForm = Backbone.View.extend({
+          render: function() {
+            $(this.el).html($('#test_form').html());
+            FormBinder.bind(this);
+            return this;
+          },
+          events: {
+            'click #submit': 'save',
+            'click #clear': 'clear'
+          },
+          save: function() {
+            var ul = $('<ul></ul>');
+            _.each(this.model.changed_attributes, function(v, k)  {
+                ul.append('<li>' + k + ': ' + v.toString() + '</li>');
+            });
+            $('#results').html(ul);
+            return false;
+          },
+          clear: function() {
+            FormBinder.clear(this);
+            return false;
+          }
+        });
+        $(function() {
+          var name = 'blah';
+          var description = 'this is a test';
+          var kind = 'test-3';
+          var kinds = ['test-2', 'test-4'];
+          var enabled = true;
+          var state = 'off';
+          var users = ['bob', 'john'];
+          var m = new Test({name: name, description: description, kind: kind, kinds: kinds, enabled: true, state: state, users: users});
+          var v = new TestForm({model : m});
+          $('body').append(v.render().el);
+        });
+    </script>
+  </head>
+  <body>
+<div id="results"></div>
+  </body>
+</html>
+
